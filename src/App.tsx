@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
-import { fetchLatestSnapshots } from './api';
+import { fetchLatestSnapshots, type LatestSnapshot } from './api';
 
 function App() {
-  const [latestSnapshots, setLatestSnapshots] = useState<any[]>([]);
+  const [latestSnapshots, setLatestSnapshots] = useState<LatestSnapshot[]>([]);
   const [parkingFaculty, setParkingFaculty] = useState<boolean>(true);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -24,17 +24,22 @@ function App() {
     ctx.fillStyle = 'lightgray';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'green';
+    ctx.font = '20px Arial';
+    for (const snapshot of latestSnapshots) {
+      
+    }
+
     latestSnapshots.forEach((snapshot, index) => {
       const x = (index % 10) * 40 + 10;
       const y = Math.floor(index / 10) * 40 + 10;
       const width = 30;
       const height = 30;
-      const availableSpots = snapshot.available;
       // const colorIntensity = availableSpots == 0 ? 
       ctx.fillStyle = 'green';
       ctx.fillRect(x, y, width, height);
       ctx.fillStyle = 'black';
-      ctx.fillText(`${availableSpots}`, x + 5, y + 20);
+      ctx.font = '16px Arial';
+      ctx.fillText(`${snapshot.available}/${snapshot.total}`, x + 5, y + 20);
     });
   }, [latestSnapshots]);
 
@@ -51,7 +56,9 @@ function App() {
           <option value="true">Include</option>
           <option value="false">Exclude</option>
         </select>
-        <canvas ref={canvasRef} width={400} height={300}></canvas>
+        <div>
+          <canvas ref={canvasRef} width={400} height={300}></canvas>
+        </div>
         <div>
           {latestSnapshots ? JSON.stringify(latestSnapshots) : 'Loading...'}
         </div>
