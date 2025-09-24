@@ -3,11 +3,11 @@ const API_BASE_URL = 'http://localhost:8001';
 
 export interface LatestSnapshot {
   device_id: number;
+  name: string;
   available: number;
-  inUse: number;
+  used: number;
   total: number;
   timestamp: string;
-  name: string;
 };
 
 export function fetchLatestSnapshots({

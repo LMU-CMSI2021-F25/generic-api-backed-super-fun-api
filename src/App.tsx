@@ -1,47 +1,35 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { fetchLatestSnapshots, type LatestSnapshot } from './api';
 
 function App() {
   const [latestSnapshots, setLatestSnapshots] = useState<LatestSnapshot[]>([]);
-  const [parkingFaculty, setParkingFaculty] = useState<boolean>(true);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [parkingFaculty, setParkingFaculty] = useState<boolean>(false);
+  const [sortBy, setSortBy] = useState<string>('name');
+
+  function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
+    if (sort === 'name') {
+      snapshots.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sort === 'last_updated') {
+      snapshots.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    } else if (sort === 'available') {
+      snapshots.sort((a, b) => b.available - a.available);
+    } else if (sort === 'inUse') {
+      snapshots.sort((a, b) => b.used - a.used);
+    } else if (sort === 'total') {
+      snapshots.sort((a, b) => b.total - a.total);
+    }
+    return snapshots;
+  }
 
   useEffect(() => {
-    fetchLatestSnapshots({ include_faculty_parking: parkingFaculty }).then(data => setLatestSnapshots(data));
+    fetchLatestSnapshots({ include_faculty_parking: parkingFaculty }).then(data => setLatestSnapshots(sortSnaps(data, sortBy)));
     let interval = setInterval(() => {
       console.log('Fetching latest snapshots... ', parkingFaculty);
-      fetchLatestSnapshots({ include_faculty_parking: parkingFaculty }).then(data => setLatestSnapshots(data));
+      fetchLatestSnapshots({ include_faculty_parking: parkingFaculty }).then(data => setLatestSnapshots(sortSnaps(data, sortBy)));
     }, 10_000);
     return () => clearInterval(interval);
-  }, [parkingFaculty]);
-
-  useEffect(() => {
-    if (!(latestSnapshots && canvasRef.current)) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d')!;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'lightgray';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'green';
-    ctx.font = '20px Arial';
-    for (const snapshot of latestSnapshots) {
-      
-    }
-
-    latestSnapshots.forEach((snapshot, index) => {
-      const x = (index % 10) * 40 + 10;
-      const y = Math.floor(index / 10) * 40 + 10;
-      const width = 30;
-      const height = 30;
-      // const colorIntensity = availableSpots == 0 ? 
-      ctx.fillStyle = 'green';
-      ctx.fillRect(x, y, width, height);
-      ctx.fillStyle = 'black';
-      ctx.font = '16px Arial';
-      ctx.fillText(`${snapshot.available}/${snapshot.total}`, x + 5, y + 20);
-    });
-  }, [latestSnapshots]);
+  }, [parkingFaculty, sortBy]);
 
   return (
     <div>
@@ -49,15 +37,28 @@ function App() {
         marginBottom: '0.3rem',
       }}>LSB EV Parking Spots</h1>
       <div>
-        <label htmlFor="faculty_parking">Faculty Parking:</label>
-        <select name="faculty_parking" id="faculty_parking" onChange={(e) => {
-          setParkingFaculty(e.target.value === 'true');
-        }}>
-          <option value="true">Include</option>
-          <option value="false">Exclude</option>
-        </select>
-        <div>
-          <canvas ref={canvasRef} width={400} height={300}></canvas>
+        <div className="selection-row">
+          <div>
+            <label htmlFor="faculty_parking">Faculty Parking:</label>
+            <select name="faculty_parking" id="faculty_parking" defaultValue={parkingFaculty.toString()} onChange={(e) => {
+              setParkingFaculty(e.target.value === 'true');
+            }}>
+              <option value="true">Include</option>
+              <option value="false">Exclude</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="sort">Sort:</label>
+            <select name="sort" id="sort" defaultValue={sortBy} onChange={(e) => {
+              setSortBy(e.target.value);
+            }}>
+              <option value="name">Name</option>
+              <option value="timestamp">Timestamp</option>
+              <option value="available">Spots - Available</option>
+              <option value="inUse">Spots - In Use</option>
+              <option value="total">Spots - Total</option>
+            </select>
+          </div>
         </div>
         <div>
           {latestSnapshots ? JSON.stringify(latestSnapshots) : 'Loading...'}
