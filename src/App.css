@@ -1,9 +1,18 @@
+html {
+  font-size: 16px;
+}
 #root {
   max-width: 1280px;
-  margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
+
+/* @media screen and (max-width: 600px) {
+  #root {
+    padding: 1rem;
+  }
+  
+} */
 
 .logo {
   height: 6em;
@@ -33,20 +42,12 @@
   }
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
 .selection-row {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 

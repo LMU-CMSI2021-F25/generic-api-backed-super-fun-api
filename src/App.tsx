@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import { fetchLatestSnapshots, type LatestSnapshot } from './api';
+import ParkingCanvas from './canvas';
 
 function App() {
   const [latestSnapshots, setLatestSnapshots] = useState<LatestSnapshot[]>([]);
   const [parkingFaculty, setParkingFaculty] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<string>('name');
+  const [refreshedAt, setRefreshedAt] = useState<Date | null>(null);
 
   function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
     if (sort === 'name') {
@@ -23,20 +25,27 @@ function App() {
   }
 
   useEffect(() => {
-    fetchLatestSnapshots({ include_faculty_parking: parkingFaculty }).then(data => setLatestSnapshots(sortSnaps(data, sortBy)));
+    fetchLatestSnapshots({ include_faculty_parking: parkingFaculty }).then(data => {
+      setLatestSnapshots(sortSnaps(data, sortBy));
+      setRefreshedAt(new Date());
+    });
     let interval = setInterval(() => {
       console.log('Fetching latest snapshots... ', parkingFaculty);
-      fetchLatestSnapshots({ include_faculty_parking: parkingFaculty }).then(data => setLatestSnapshots(sortSnaps(data, sortBy)));
+      fetchLatestSnapshots({ include_faculty_parking: parkingFaculty }).then(data => {
+        setLatestSnapshots(sortSnaps(data, sortBy));
+        setRefreshedAt(new Date());
+      });
     }, 10_000);
     return () => clearInterval(interval);
   }, [parkingFaculty, sortBy]);
 
   return (
-    <div>
-      <h1 style={{
-        marginBottom: '0.3rem',
-      }}>LSB EV Parking Spots</h1>
+    <div style={{ marginTop: 0 }}>
+      <h1 className="non-standard-font">LSB EV Parking Spots</h1>
       <div>
+        <div>
+          <ParkingCanvas latestSnapshots={latestSnapshots} refreshedAt={refreshedAt} />
+        </div>
         <div className="selection-row">
           <div>
             <label htmlFor="faculty_parking">Faculty Parking:</label>
@@ -60,6 +69,7 @@ function App() {
             </select>
           </div>
         </div>
+        
         <div>
           {latestSnapshots ? JSON.stringify(latestSnapshots) : 'Loading...'}
         </div>

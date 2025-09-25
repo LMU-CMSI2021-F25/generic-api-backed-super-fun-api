@@ -1,5 +1,5 @@
-// const API_BASE_URL = 'https://lsb-api.compiles.me';
-const API_BASE_URL = 'http://localhost:8001';
+const API_BASE_URL = 'https://lsb-api.compiles.me';
+// const API_BASE_URL = 'http://localhost:8001';
 
 export interface LatestSnapshot {
   device_id: number;
