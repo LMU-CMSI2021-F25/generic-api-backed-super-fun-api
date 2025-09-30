@@ -5,6 +5,8 @@ html {
   max-width: 1280px;
   padding: 2rem;
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* @media screen and (max-width: 600px) {
@@ -55,4 +57,16 @@ html {
   display: flex;
   flex-direction: column;
   text-align: left;
+}
+
+select {
+  padding: 4px;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: #333;
 }

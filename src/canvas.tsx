@@ -27,12 +27,14 @@ export default function ParkingCanvas({
       const availabilityColor = (x == 1 && y == 4) ? (snapshot.available > 0 ? BLUE : RED) : (snapshot.available == 0 ? RED : snapshot.available > 1 ? GREEN : ORANGE);
       ctx.fillStyle = availabilityColor;
 
-      ctx.fillRect(x*50, y*45, 45, 40);
+      const posX = 75;
+
+      ctx.fillRect(posX*x-(posX/2), y * 45, posX-5, 40);
 
       ctx.fillStyle = "black";
       ctx.fillText(
         `${snapshot.available}/${snapshot.total}`,
-        x * 50 + 10,
+        x * posX + 10 - (posX / 2),
         y * 45 + 27,
       );
     }
