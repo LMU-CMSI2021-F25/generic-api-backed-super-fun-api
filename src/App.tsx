@@ -18,38 +18,11 @@ function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
   return snapshots;
 }
 
-function useMinuteTask(task: () => void) {
-  useEffect(() => {
-    const now = new Date();
-    const delay =
-      60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
-
-    let intervalId: NodeJS.Timeout | null = null;
-    const timeoutId: NodeJS.Timeout = setTimeout(() => {
-      task(); // run at the start of next minute
-
-      intervalId = setInterval(() => {
-        task();
-      }, 60000);
-    }, delay);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [task]);
-}
-
-function MinuteRenderer() {
-  
-}
-
 function App() {
   const [rawLatestSnapshots, setRawLatestSnapshots] = useState<LatestSnapshot[]>([]);
   const [parkingFaculty, setParkingFaculty] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<string>('name');
   const [refreshedAt, setRefreshedAt] = useState<Date | null>(null);
-  const [minute, setMinute] = useState<number>(new Date().getMinutes());
 
   // Cache/Memoize the result based on last fetched data (preventing spam of api calls)
   const latestSnapshots = useMemo(() => {
@@ -71,20 +44,13 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    let minInterval = setInterval(() => {
-      setMinute(new Date().getMinutes());
-    }, 60_000);
-    return () => clearInterval(minInterval);
-  }, [])
-
   return (
     <>
       <h1 className="non-standard-font">LSB EV Parking Spots</h1>
       <div className="canvas-container">
         <ParkingCanvas latestSnapshots={rawLatestSnapshots} refreshedAt={refreshedAt} />
       </div>
-      <div id="latest-snapshot">
+      <div className="card">
         <div className="selection-row" id="snapshot-options">
           <div>
             <label htmlFor="faculty_parking">Faculty Parking:</label>
@@ -126,6 +92,7 @@ function App() {
                 <tr>
                   <th>Name</th>
                   <th>Available</th>
+                  <th>Age (s)</th>
                   <th>Last Updated</th>
                 </tr>
               </thead>
