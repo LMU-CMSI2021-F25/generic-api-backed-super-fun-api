@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import { fetchLatestSnapshots, type LatestSnapshot } from './api';
-import ParkingCanvas from './canvas';
+import ParkingCanvas from './components/parking-canvas';
 
 function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
   if (sort === 'name') {

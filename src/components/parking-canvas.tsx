@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { LatestSnapshot } from "./api";
+import type { LatestSnapshot } from "../api";
 
 const RED = "oklch(0.8 0.2 30)";
 const ORANGE = "oklch(0.8 0.2 80)";
