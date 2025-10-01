@@ -3,6 +3,8 @@ import './App.css';
 import { fetchLatestSnapshots, type LatestSnapshot } from './api';
 import ParkingCanvas from './components/parking-canvas';
 import { useAlignedInterval } from './utils/useAlignedInterval';
+import RelativeTime from './components/relative-time';
+import { LineChart } from '@mui/x-charts';
 
 function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
   if (sort === 'name') {
@@ -90,20 +92,27 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {latestSnapshots.map((snapshot) => {
-                  const age = Math.floor((new Date().getTime() - new Date(snapshot.timestamp).getTime()) / 1000);
-                  return (
+                {latestSnapshots.map((snapshot) => (
                     <tr
                       key={snapshot.name}
                       className={snapshot.available === 0 ? 'full' : snapshot.available / snapshot.total <= 0.2 ? 'almost-full' : 'empty'}
                     >
                       <td>{snapshot.name}</td>
                       <td>{snapshot.available}</td>
-                      <td className="age">{age}</td>
-                      <td>{new Date(snapshot.timestamp).toLocaleString()}</td>
+                      <td className="age" style={{
+                        textAlign: 'left'
+                      }}><RelativeTime isoString={snapshot.timestamp} /></td>
+                      <td>{new Date(snapshot.timestamp).toLocaleString('en', {
+                        month: '2-digit',
+                        day: '2-digit',
+                        year: new Date(snapshot.timestamp).getFullYear() === new Date().getFullYear() ? undefined : '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                      })}</td>
                     </tr>
                   )
-                })}
+                )}
               </tbody>
             </table>
           )}
@@ -112,6 +121,15 @@ function App() {
               Last refreshed at: {refreshedAt?.toLocaleTimeString()}
             </p>
           )}
+        </div>
+
+        <div>
+          <h2 style={{marginBottom:0}}>Snapshot Trends</h2>
+          <p className="text-muted" style={{marginTop:0, fontSize: '0.8em'}}>* Data points are taken every minute</p>
+          <div className="chart-container">
+            <LineChart series={[{label: "Available Spots", data: latestSnapshots.map(snapshot => snapshot.available)}]} />
+            <LineChart series={[{label: "Available Spots", data: latestSnapshots.map(snapshot => snapshot.available)}]} />
+          </div>
         </div>
       </div>
     </>

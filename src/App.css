@@ -91,3 +91,10 @@ table {
   padding: 1rem; */
   
 }
+
+.chart-container {
+  background-color: var(--secondary);
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
