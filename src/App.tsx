@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import './App.css';
 import { fetchLatestSnapshots, type LatestSnapshot } from './api';
 import ParkingCanvas from './components/parking-canvas';
+import { useAlignedInterval } from './utils/useAlignedInterval';
 
 function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
   if (sort === 'name') {
@@ -29,24 +30,16 @@ function App() {
     return sortSnaps([...rawLatestSnapshots], sortBy).filter((snap) => (parkingFaculty ? true : !snap.name.includes('P3')));
   }, [rawLatestSnapshots, sortBy, parkingFaculty]);
 
-  useEffect(() => {
+  useAlignedInterval(() => {
     fetchLatestSnapshots().then((data) => {
       setRawLatestSnapshots(data);
       setRefreshedAt(new Date());
     });
-    let interval = setInterval(() => {
-      console.log('Fetching latest snapshots... ');
-      fetchLatestSnapshots().then((data) => {
-        setRawLatestSnapshots(data);
-        setRefreshedAt(new Date());
-      });
-    }, 10_000);
-    return () => clearInterval(interval);
-  }, []);
+  }, 15);
 
   return (
     <>
-      <h1 className="non-standard-font">LSB EV Parking Spots</h1>
+      <h1 className="non-standard-font title">LSB EV Parking Spots</h1>
       <div className="canvas-container">
         <ParkingCanvas latestSnapshots={rawLatestSnapshots} refreshedAt={refreshedAt} />
       </div>
@@ -85,7 +78,7 @@ function App() {
           </div>
         </div>
 
-        <div id="snapshot-table">
+        <div id="snapshot-container">
           {latestSnapshots && (
             <table>
               <thead>
@@ -106,7 +99,7 @@ function App() {
                     >
                       <td>{snapshot.name}</td>
                       <td>{snapshot.available}</td>
-                      <td>{age}</td>
+                      <td className="age">{age}</td>
                       <td>{new Date(snapshot.timestamp).toLocaleString()}</td>
                     </tr>
                   )
@@ -115,7 +108,7 @@ function App() {
             </table>
           )}
           {refreshedAt && (
-            <p className="text-muted" style={{ marginTop: '2px' }}>
+            <p className="text-muted" style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               Last refreshed at: {refreshedAt?.toLocaleTimeString()}
             </p>
           )}
