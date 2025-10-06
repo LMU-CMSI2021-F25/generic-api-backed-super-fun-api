@@ -86,15 +86,9 @@ select:focus {
   border-color: #333;
 }
 
-table {
-  /* margin: auto;
-  padding: 1rem; */
-  
-}
-
 .chart-container {
   background-color: var(--secondary);
   display: grid;
-  gap: 1rem;
+  gap: 2rem;
   margin-bottom: 2rem;
 }

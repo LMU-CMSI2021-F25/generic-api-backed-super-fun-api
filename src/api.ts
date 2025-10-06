@@ -13,10 +13,13 @@ export interface LatestSnapshot extends Snapshot {
   name: string;
 };
 
+const force_fail = false;
+
 export function fetchLatestSnapshots({
   include_faculty_parking = true,
 } = {}) {
   return new Promise<LatestSnapshot[]>((resolve, reject) => {
+    if(force_fail) reject("Failed to fetch latest snapshots");
     fetch(`${API_BASE_URL}/snapshots?include_faculty_parking=${include_faculty_parking}`)
       .then(response => {
         if (response.status === 200) return resolve(response.json().then(r => r.filter((snap: LatestSnapshot) => snap.name.startsWith("P"))) as Promise<LatestSnapshot[]>);
@@ -26,8 +29,53 @@ export function fetchLatestSnapshots({
   });
 }
 
-export function fetchSnapshotHistory(device_id: number) {
-  throw new Error("Function not implemented."+ device_id);
+export interface AllTimeWeeklyHourlyAverage {
+  day_of_week_num: string
+  hour_num: string
+  hour_label: string
+  avg_total_available_ports: string
 }
 
-// export function
+export function fetchWeeklyHourlyAverages() {
+  return new Promise<AllTimeWeeklyHourlyAverage[]>((resolve, reject) => {
+    if(force_fail) reject("Failed to fetch latest snapshots");
+    fetch(`${API_BASE_URL}/weekly-hourly/alltime`)
+      .then(response => {
+        if (response.status === 200) return resolve(response.json() as Promise<AllTimeWeeklyHourlyAverage[]>);
+        else return reject("Failed to fetch weekly hourly averages");
+      })
+      .catch(error => reject(error));
+  });
+}
+
+export interface ThisWeeklyHourlyAverage {
+  calendar_date: string
+  day_of_week_num: string
+  hour_num: string
+  hour_label: string
+  total_available_ports: string
+}
+
+export function fetchThisWeeklyHourlyAverages() {
+  return new Promise<ThisWeeklyHourlyAverage[]>((resolve, reject) => {
+    if(force_fail) reject("Failed to fetch latest snapshots");
+    fetch(`${API_BASE_URL}/weekly-hourly/thisweek`)
+      .then(response => {
+        if (response.status === 200) return resolve(response.json() as Promise<ThisWeeklyHourlyAverage[]>);
+        else return reject("Failed to fetch this weekly hourly averages");
+      })
+      .catch(error => reject(error));
+  });
+}
+
+export function fetchSnapshotHistory(device_id: number) {
+  return new Promise<Snapshot[]>((resolve, reject) => {
+    if(force_fail) reject("Failed to fetch latest snapshots");
+    fetch(`${API_BASE_URL}/snapshots/${device_id}`)
+      .then(response => {
+        if (response.status === 200) return resolve(response.json() as Promise<Snapshot[]>);
+        else return reject("Failed to fetch snapshot history");
+      })
+      .catch(error => reject(error));
+  });
+}

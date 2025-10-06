@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import './App.css';
-import { fetchLatestSnapshots, type LatestSnapshot } from './api';
+import { fetchLatestSnapshots, fetchWeeklyHourlyAverages, type LatestSnapshot, type AllTimeWeeklyHourlyAverage, type ThisWeeklyHourlyAverage, fetchThisWeeklyHourlyAverages } from './api';
 import ParkingCanvas from './components/parking-canvas';
 import { useAlignedInterval } from './utils/useAlignedInterval';
 import RelativeTime from './components/relative-time';
-import { LineChart } from '@mui/x-charts';
+import { BarChart, LineChart } from '@mui/x-charts';
 
 function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
   if (sort === 'name') {
@@ -21,8 +21,19 @@ function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
   return snapshots;
 }
 
+function formatWeeklyHourlyLabel(data: AllTimeWeeklyHourlyAverage) {
+  return (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][Number(data.day_of_week_num)] + ' - ' + data.hour_label) + ' PST' + ' - ' + data.avg_total_available_ports + ' avg available';
+}
+
+function formatThisWeeklyHourlyLabel(data: ThisWeeklyHourlyAverage) {
+  return (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][Number(data.day_of_week_num)] + ' ' + data.hour_label) + ' PST' + ' - ' + data.total_available_ports + ' avg available';
+}
+
+
 function App() {
   const [rawLatestSnapshots, setRawLatestSnapshots] = useState<LatestSnapshot[]>([]);
+  const [weeklyHourly, setWeeklyHourly] = useState<AllTimeWeeklyHourlyAverage[]>([]);
+  const [thisWeeklyHourly, setThisWeeklyHourly] = useState<ThisWeeklyHourlyAverage[]>([]);
   const [parkingFaculty, setParkingFaculty] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<string>('name');
   const [refreshedAt, setRefreshedAt] = useState<Date | null>(null);
@@ -36,6 +47,12 @@ function App() {
     fetchLatestSnapshots().then((data) => {
       setRawLatestSnapshots(data);
       setRefreshedAt(new Date());
+    });
+    fetchWeeklyHourlyAverages().then((data) => {
+      setWeeklyHourly(data);
+    });
+    fetchThisWeeklyHourlyAverages().then((data) => {
+      setThisWeeklyHourly(data);
     });
   }, 15);
 
@@ -127,8 +144,21 @@ function App() {
           <h2 style={{marginBottom:0}}>Snapshot Trends</h2>
           <p className="text-muted" style={{marginTop:0, fontSize: '0.8em'}}>* Data points are taken every minute</p>
           <div className="chart-container">
-            <LineChart series={[{label: "Available Spots", data: latestSnapshots.map(snapshot => snapshot.available)}]} />
-            <LineChart series={[{label: "Available Spots", data: latestSnapshots.map(snapshot => snapshot.available)}]} />
+            <BarChart
+              style={{ background: 'transparent' }}
+              loading={weeklyHourly.length === 0}
+              series={[
+                {
+                  label: "Average Available Spots (all time)",
+                  data: weeklyHourly.map((point) => Number(point.avg_total_available_ports)),
+                  valueFormatter: (_, context) => formatWeeklyHourlyLabel(weeklyHourly[context.dataIndex]),
+                },
+                {
+                  label: "Average Available Spots (this week)",
+                  data: thisWeeklyHourly.map((point) => Number(point.total_available_ports)),
+                  valueFormatter: (_, context) => formatThisWeeklyHourlyLabel(thisWeeklyHourly[context.dataIndex]),
+                }
+              ]} />
           </div>
         </div>
       </div>
