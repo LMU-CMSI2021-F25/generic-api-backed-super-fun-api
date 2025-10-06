@@ -86,9 +86,24 @@ select:focus {
   border-color: #333;
 }
 
+table {
+  transition: all 0.3s ease-in-out;
+}
+
+
 .chart-container {
   background-color: var(--secondary);
   display: grid;
   gap: 2rem;
   margin-bottom: 2rem;
+}
+
+.color-green {
+  color: var(--green);
+}
+.color-red {
+  color: var(--red);
+}
+.color-orange {
+  color: var(--orange);
 }

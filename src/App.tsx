@@ -109,14 +109,29 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {latestSnapshots.map((snapshot) => (
+                {latestSnapshots.map((snapshot) => {
+                  let deviceActivity: "full" | "almost-full" | "empty" = snapshot.available === 0 ? 'full' : snapshot.available / snapshot.total <= 0.2 ? 'almost-full' : 'empty';
+                  let ageClass = `${deviceActivity} age`;
+                  const ageInSeconds = Math.floor((new Date().getTime() - new Date(snapshot.timestamp).getTime()) / 1000);
+                  if (deviceActivity === 'full') {
+                    ageClass += " color-red";
+                  } else {
+                    if (ageInSeconds <= 30 * 60) {
+                      ageClass += " color-green";
+                    } else if (ageInSeconds >= 3 * 60 * 60) {
+                      ageClass += " color-red";
+                    } else {
+                      ageClass += " color-orange";
+                    }
+                  }
+                  return (
                     <tr
                       key={snapshot.name}
-                      className={snapshot.available === 0 ? 'full' : snapshot.available / snapshot.total <= 0.2 ? 'almost-full' : 'empty'}
+                      className={ageClass}
                     >
                       <td>{snapshot.name}</td>
                       <td>{snapshot.available}</td>
-                      <td className="age" style={{
+                      <td style={{
                         textAlign: 'left'
                       }}><RelativeTime isoString={snapshot.timestamp} /></td>
                       <td>{new Date(snapshot.timestamp).toLocaleString('en', {
@@ -129,7 +144,7 @@ function App() {
                       })}</td>
                     </tr>
                   )
-                )}
+                })}
               </tbody>
             </table>
           )}
