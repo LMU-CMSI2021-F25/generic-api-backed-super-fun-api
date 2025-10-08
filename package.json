@@ -8,7 +8,7 @@
     "start": "npm run build && npm run preview",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --port 5173"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
