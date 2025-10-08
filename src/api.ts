@@ -18,7 +18,9 @@ const force_fail = false;
 export function fetchLatestSnapshots({ include_faculty_parking = true } = {}) {
   return new Promise<LatestSnapshot[]>((resolve, reject) => {
     if (force_fail) reject('Failed to fetch latest snapshots');
-    fetch(`${API_BASE_URL}/snapshots?include_faculty_parking=${include_faculty_parking}`)
+    fetch(`${API_BASE_URL}/snapshots?include_faculty_parking=${include_faculty_parking}`, {
+      cache: 'no-cache',
+    })
       .then((response) => {
         if (response.status === 200)
           return resolve(
@@ -40,7 +42,9 @@ export interface AllTimeWeeklyHourlyAverage {
 export function fetchWeeklyHourlyAverages() {
   return new Promise<AllTimeWeeklyHourlyAverage[]>((resolve, reject) => {
     if (force_fail) reject('Failed to fetch latest snapshots');
-    fetch(`${API_BASE_URL}/weekly-hourly/alltime`)
+    fetch(`${API_BASE_URL}/weekly-hourly/alltime`, {
+      cache: 'no-cache',
+    })
       .then((response) => {
         if (response.status === 200) return resolve(response.json() as Promise<AllTimeWeeklyHourlyAverage[]>);
         else return reject('Failed to fetch weekly hourly averages');
@@ -60,7 +64,9 @@ export interface ThisWeeklyHourlyAverage {
 export function fetchThisWeeklyHourlyAverages() {
   return new Promise<ThisWeeklyHourlyAverage[]>((resolve, reject) => {
     if (force_fail) reject('Failed to fetch latest snapshots');
-    fetch(`${API_BASE_URL}/weekly-hourly/thisweek`)
+    fetch(`${API_BASE_URL}/weekly-hourly/thisweek`, {
+      cache: 'no-cache',
+    })
       .then((response) => {
         if (response.status === 200) return resolve(response.json() as Promise<ThisWeeklyHourlyAverage[]>);
         else return reject('Failed to fetch this weekly hourly averages');
@@ -72,7 +78,9 @@ export function fetchThisWeeklyHourlyAverages() {
 export function fetchSnapshotHistory(device_id: number) {
   return new Promise<Snapshot[]>((resolve, reject) => {
     if (force_fail) reject('Failed to fetch latest snapshots');
-    fetch(`${API_BASE_URL}/snapshots/${device_id}`)
+    fetch(`${API_BASE_URL}/snapshots/${device_id}`, {
+      cache: 'no-cache',
+    })
       .then((response) => {
         if (response.status === 200) return resolve(response.json() as Promise<Snapshot[]>);
         else return reject('Failed to fetch snapshot history');
