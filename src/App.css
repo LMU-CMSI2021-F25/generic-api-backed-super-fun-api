@@ -100,10 +100,26 @@ table {
 
 .color-green {
   color: var(--green);
+  transition: color 1.5s, background-color 0.8s;
 }
 .color-red {
   color: var(--red);
+  transition: color 1.5s, background-color 0.8s;
 }
 .color-orange {
   color: var(--orange);
+  transition: color 1.5s, background-color 0.8s;
+}
+
+.color-green:hover {
+  color: black;
+  background-color: var(--green);
+}
+.color-red:hover {
+  color: black;
+  background-color: var(--red);
+}
+.color-orange:hover {
+  color: black;
+  background-color: var(--orange);
 }
