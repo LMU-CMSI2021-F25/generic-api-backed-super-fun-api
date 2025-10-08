@@ -4,7 +4,7 @@ import { fetchLatestSnapshots, fetchWeeklyHourlyAverages, type LatestSnapshot, t
 import ParkingCanvas from './components/parking-canvas';
 import { useAlignedInterval } from './utils/useAlignedInterval';
 import RelativeTime from './components/relative-time';
-import { BarChart, LineChart } from '@mui/x-charts';
+import { BarChart } from '@mui/x-charts';
 
 function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
   if (sort === 'name') {
