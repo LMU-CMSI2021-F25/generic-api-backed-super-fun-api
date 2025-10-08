@@ -1,6 +1,13 @@
 import { useMemo, useState } from 'react';
 import './App.css';
-import { fetchLatestSnapshots, fetchWeeklyHourlyAverages, type LatestSnapshot, type AllTimeWeeklyHourlyAverage, type ThisWeeklyHourlyAverage, fetchThisWeeklyHourlyAverages } from './api';
+import {
+  fetchLatestSnapshots,
+  fetchWeeklyHourlyAverages,
+  type LatestSnapshot,
+  type AllTimeWeeklyHourlyAverage,
+  type ThisWeeklyHourlyAverage,
+  fetchThisWeeklyHourlyAverages,
+} from './api';
 import ParkingCanvas from './components/parking-canvas';
 import { useAlignedInterval } from './utils/useAlignedInterval';
 import RelativeTime from './components/relative-time';
@@ -22,13 +29,28 @@ function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
 }
 
 function formatWeeklyHourlyLabel(data: AllTimeWeeklyHourlyAverage) {
-  return (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][Number(data.day_of_week_num)] + ' - ' + data.hour_label) + ' PST' + ' - ' + data.avg_total_available_ports + ' avg available';
+  return (
+    ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][Number(data.day_of_week_num)] +
+    ' - ' +
+    data.hour_label +
+    ' PST' +
+    ' - ' +
+    data.avg_total_available_ports +
+    ' avg available'
+  );
 }
 
 function formatThisWeeklyHourlyLabel(data: ThisWeeklyHourlyAverage) {
-  return (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][Number(data.day_of_week_num)] + ' ' + data.hour_label) + ' PST' + ' - ' + data.total_available_ports + ' avg available';
+  return (
+    ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][Number(data.day_of_week_num)] +
+    ' ' +
+    data.hour_label +
+    ' PST' +
+    ' - ' +
+    data.total_available_ports +
+    ' avg available'
+  );
 }
-
 
 function App() {
   const [rawLatestSnapshots, setRawLatestSnapshots] = useState<LatestSnapshot[]>([]);
@@ -110,40 +132,44 @@ function App() {
               </thead>
               <tbody>
                 {latestSnapshots.map((snapshot) => {
-                  let deviceActivity: "full" | "almost-full" | "empty" = snapshot.available === 0 ? 'full' : snapshot.available / snapshot.total <= 0.2 ? 'almost-full' : 'empty';
+                  let deviceActivity: 'full' | 'almost-full' | 'empty' =
+                    snapshot.available === 0 ? 'full' : snapshot.available / snapshot.total <= 0.2 ? 'almost-full' : 'empty';
                   let ageClass = `${deviceActivity} age`;
                   const ageInSeconds = Math.floor((new Date().getTime() - new Date(snapshot.timestamp).getTime()) / 1000);
                   if (deviceActivity === 'full') {
-                    ageClass += " color-red";
+                    ageClass += ' color-red';
                   } else {
                     if (ageInSeconds <= 30 * 60) {
-                      ageClass += " color-green";
+                      ageClass += ' color-green';
                     } else if (ageInSeconds >= 3 * 60 * 60) {
-                      ageClass += " color-red";
+                      ageClass += ' color-red';
                     } else {
-                      ageClass += " color-orange";
+                      ageClass += ' color-orange';
                     }
                   }
                   return (
-                    <tr
-                      key={snapshot.name}
-                      className={ageClass}
-                    >
+                    <tr key={snapshot.name} className={ageClass}>
                       <td>{snapshot.name}</td>
                       <td>{snapshot.available}</td>
-                      <td style={{
-                        textAlign: 'left'
-                      }}><RelativeTime isoString={snapshot.timestamp} /></td>
-                      <td>{new Date(snapshot.timestamp).toLocaleString('en', {
-                        month: '2-digit',
-                        day: '2-digit',
-                        year: new Date(snapshot.timestamp).getFullYear() === new Date().getFullYear() ? undefined : '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                      })}</td>
+                      <td
+                        style={{
+                          textAlign: 'left',
+                        }}
+                      >
+                        <RelativeTime isoString={snapshot.timestamp} />
+                      </td>
+                      <td>
+                        {new Date(snapshot.timestamp).toLocaleString('en', {
+                          month: '2-digit',
+                          day: '2-digit',
+                          year: new Date(snapshot.timestamp).getFullYear() === new Date().getFullYear() ? undefined : '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                        })}
+                      </td>
                     </tr>
-                  )
+                  );
                 })}
               </tbody>
             </table>
@@ -156,24 +182,27 @@ function App() {
         </div>
 
         <div>
-          <h2 style={{marginBottom:0}}>Snapshot Trends</h2>
-          <p className="text-muted" style={{marginTop:0, fontSize: '0.8em'}}>* Data points are taken every minute</p>
+          <h2 style={{ marginBottom: 0 }}>Snapshot Trends</h2>
+          <p className="text-muted" style={{ marginTop: 0, fontSize: '0.8em' }}>
+            * Data points are taken every minute
+          </p>
           <div className="chart-container">
             <BarChart
               style={{ background: 'transparent' }}
               loading={weeklyHourly.length === 0}
               series={[
                 {
-                  label: "Average Available Spots (all time)",
+                  label: 'Average Available Spots (all time)',
                   data: weeklyHourly.map((point) => Number(point.avg_total_available_ports)),
                   valueFormatter: (_, context) => formatWeeklyHourlyLabel(weeklyHourly[context.dataIndex]),
                 },
                 {
-                  label: "Average Available Spots (this week)",
+                  label: 'Average Available Spots (this week)',
                   data: thisWeeklyHourly.map((point) => Number(point.total_available_ports)),
                   valueFormatter: (_, context) => formatThisWeeklyHourlyLabel(thisWeeklyHourly[context.dataIndex]),
-                }
-              ]} />
+                },
+              ]}
+            />
           </div>
         </div>
       </div>

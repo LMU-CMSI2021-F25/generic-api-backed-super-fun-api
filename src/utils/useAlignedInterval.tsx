@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export function useAlignedInterval(task: () => void, intervalSeconds: number, instantRun: boolean = true) {
   const taskRef = useRef(task);

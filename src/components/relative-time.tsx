@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export default function AgeText({ isoString }: { isoString: string | Date }) {
-  const [ageText, setAgeText] = useState("");
+  const [ageText, setAgeText] = useState('');
 
   const calculateAgeText = () => {
-    if (!isoString) return "";
+    if (!isoString) return '';
 
     const now = new Date().getTime();
-    const then = new Date(typeof isoString != "string" && "toISOString" in isoString && typeof isoString.toISOString === "function" ? isoString.toISOString() : isoString).getTime();
+    const then = new Date(
+      typeof isoString != 'string' && 'toISOString' in isoString && typeof isoString.toISOString === 'function'
+        ? isoString.toISOString()
+        : isoString
+    ).getTime();
     const diffSeconds = Math.floor((now - then) / 1000);
 
     const isFuture = diffSeconds < 0;
@@ -15,11 +19,11 @@ export default function AgeText({ isoString }: { isoString: string | Date }) {
 
     if (absSeconds < 3600) {
       const minutes = Math.round(absSeconds / 60);
-      return `${isFuture ? "-" : ""}${minutes} min ago`;
+      return `${isFuture ? '-' : ''}${minutes} min ago`;
     } else {
       const hours = Math.floor(absSeconds / 3600);
       const minutes = Math.round((absSeconds / 60) % 60);
-      return `${isFuture ? "-" : ""}${hours} hr ${minutes} min ago`;
+      return `${isFuture ? '-' : ''}${hours} hr ${minutes} min ago`;
     }
   };
 
