@@ -15,6 +15,18 @@ export default function ParkingCanvas({ latestSnapshots, refreshedAt }: { latest
     const ctx = canvas.getContext('2d')!;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.font = '20px Arial';
+    if (!latestSnapshots.length) {
+      // Hey! 👀 This handles no data (aka waiting on API or network error)
+      // the API gets called every 15 seconds, so there should almost always be data within 15 seconds of loading
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'lightgray';
+      ctx.fillRect(30, 30, 260, 167);
+      ctx.fillStyle = 'black';
+      ctx.fillText('No Data Available.', 150, 105);
+      ctx.fillText('Waiting on API...', 150, 130);
+      return;
+    }
+    ctx.textAlign = 'left';
     for (const snapshot of latestSnapshots) {
       const [y, x] = snapshot.name
         .slice(1)
