@@ -52,10 +52,7 @@ export default function ParkingCanvas({ latestSnapshots, refreshedAt }: { latest
       ref={canvasRef}
       width={320}
       height={227}
-      style={{
-        backgroundImage: `url("https://discord.mx/5Xyq89e1xv.png")`,
-        backgroundRepeat: 'repeat',
-      }}
+      className="parking-canvas"
     ></canvas>
   );
 }
