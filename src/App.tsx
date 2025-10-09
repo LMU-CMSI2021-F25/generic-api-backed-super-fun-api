@@ -35,7 +35,7 @@ function formatChartLabel(data: AllTimeWeeklyHourlyAverage | ThisWeeklyHourlyAve
     data.hour_label +
     ' PST' +
     ' - ' +
-    data.avg_available +
+    (data.avg_available ? data.avg_available : 0) +
     ' avg available'
   );
 }
@@ -181,12 +181,12 @@ function App() {
               series={[
                 {
                   label: 'Average Available Spots (all time)',
-                  data: weeklyHourly.map((point) => Number(point.avg_available)),
+                  data: weeklyHourly.map((point) => point.avg_available ? Number(point.avg_available) : 0),
                   valueFormatter: (_, context) => formatChartLabel(weeklyHourly[context.dataIndex]),
                 },
                 {
                   label: 'Average Available Spots (this week)',
-                  data: thisWeeklyHourly.map((point) => Number(point.avg_available)),
+                  data: thisWeeklyHourly.map((point) => point.avg_available ? Number(point.avg_available) : 0),
                   valueFormatter: (_, context) => formatChartLabel(thisWeeklyHourly[context.dataIndex]),
                 },
               ]}
