@@ -36,7 +36,7 @@ export interface AllTimeWeeklyHourlyAverage {
   day_of_week_num: string;
   hour_num: string;
   hour_label: string;
-  avg_total_available_ports: string;
+  avg_available: string;
 }
 
 export function fetchWeeklyHourlyAverages() {
@@ -58,7 +58,7 @@ export interface ThisWeeklyHourlyAverage {
   day_of_week_num: string;
   hour_num: string;
   hour_label: string;
-  total_available_ports: string;
+  avg_available: string;
 }
 
 export function fetchThisWeeklyHourlyAverages() {

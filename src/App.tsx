@@ -28,26 +28,14 @@ function sortSnaps(snapshots: LatestSnapshot[], sort: string) {
   return snapshots;
 }
 
-function formatWeeklyHourlyLabel(data: AllTimeWeeklyHourlyAverage) {
-  return (
-    ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][Number(data.day_of_week_num)] +
-    ' - ' +
-    data.hour_label +
-    ' PST' +
-    ' - ' +
-    data.avg_total_available_ports +
-    ' avg available'
-  );
-}
-
-function formatThisWeeklyHourlyLabel(data: ThisWeeklyHourlyAverage) {
+function formatChartLabel(data: AllTimeWeeklyHourlyAverage | ThisWeeklyHourlyAverage) {
   return (
     ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][Number(data.day_of_week_num)] +
     ' ' +
     data.hour_label +
     ' PST' +
     ' - ' +
-    data.total_available_ports +
+    data.avg_available +
     ' avg available'
   );
 }
@@ -189,17 +177,17 @@ function App() {
           <div className="chart-container">
             <BarChart
               style={{ background: 'transparent' }}
-              loading={weeklyHourly.length === 0}
+              loading={[...weeklyHourly, ...thisWeeklyHourly].length === 0}
               series={[
                 {
                   label: 'Average Available Spots (all time)',
-                  data: weeklyHourly.map((point) => Number(point.avg_total_available_ports)),
-                  valueFormatter: (_, context) => formatWeeklyHourlyLabel(weeklyHourly[context.dataIndex]),
+                  data: weeklyHourly.map((point) => Number(point.avg_available)),
+                  valueFormatter: (_, context) => formatChartLabel(weeklyHourly[context.dataIndex]),
                 },
                 {
                   label: 'Average Available Spots (this week)',
-                  data: thisWeeklyHourly.map((point) => Number(point.total_available_ports)),
-                  valueFormatter: (_, context) => formatThisWeeklyHourlyLabel(thisWeeklyHourly[context.dataIndex]),
+                  data: thisWeeklyHourly.map((point) => Number(point.avg_available)),
+                  valueFormatter: (_, context) => formatChartLabel(thisWeeklyHourly[context.dataIndex]),
                 },
               ]}
             />
