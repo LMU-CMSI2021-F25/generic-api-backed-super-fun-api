@@ -45,6 +45,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
 
+  /* Colors used for table & "background-image" canvas */
   --red: oklch(0.8 0.2 30);
   --orange: oklch(0.8 0.2 80);
   --green: oklch(0.8 0.2 150);
