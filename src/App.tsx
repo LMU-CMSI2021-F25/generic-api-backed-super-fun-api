@@ -177,7 +177,7 @@ function App() {
           <div className="chart-container">
             <BarChart
               style={{ background: 'transparent' }}
-              loading={[...weeklyHourly, ...thisWeeklyHourly].length === 0}
+              loading={weeklyHourly.length === 0 || thisWeeklyHourly.length === 0}
               series={[
                 {
                   label: 'Average Available Spots (all time)',
